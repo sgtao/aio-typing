@@ -1,0 +1,16 @@
+/* style.css */
+body {
+    padding-top:40px;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+}
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+#target {
+    font-size: 24px;
+    letter-spacing: .1em;
+    text-overflow: clip;
+    overflow-wrap: break-word;
+}
