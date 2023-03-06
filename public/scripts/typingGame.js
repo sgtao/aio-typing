@@ -2,6 +2,7 @@
 'use strict';
 {
     const targetWords = ["red", "pink", "blue", "yellow", "green"];
+    const translate  = document.querySelector("#translate");
     const targetElem  = document.querySelector("#target");
     const result = document.querySelector("#result");
     const audioPanel = document.querySelector("#audio-panel");
@@ -23,7 +24,11 @@
         let _index = 0;
         allInOne.forEach(item => {
             console.log(item);
-            ctx.push({ "index": item.index, "word": item.englishText});
+            ctx.push({
+                "index": item.index,
+                "word": item.englishText,
+                "translate": item.translation.slashed
+            });
             contents_index.push(_index++);
         });
         console.log(ctx);
@@ -65,6 +70,7 @@
         console.log(contents_index);
         let _context = sectionContents.ctx.at(_index);
         console.log(_context);
+        translate.textContent = _context.translate;
         word = _context.word;
         wordUpper = word.toUpperCase();
         wordLower = word.toLowerCase();
