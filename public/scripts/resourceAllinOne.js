@@ -13,5 +13,19 @@ const resourceAllinOne = (() => {
             });
         return loadedJSON;
     }
-    return {loadResource}
+    const checkFileExist = async (filePath) => {
+        let _existFilePath = false;
+        console.log(`check file Exist : ${filePath}`);
+        await fetch(filePath)
+            .then ((response) => {
+                console.dir(response);
+                if (response !== undefined) _existFilePath = true;
+            })
+            .catch((e) => {
+                _existFilePath = false;
+            });
+        console.log("  result : " + _existFilePath);
+        return _existFilePath;
+    }
+    return {loadResource, checkFileExist}
 })();
