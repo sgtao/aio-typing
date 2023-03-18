@@ -14,3 +14,6 @@ body {
     text-overflow: clip;
     overflow-wrap: break-word;
 }
+.hidden {
+    display: none;
+}

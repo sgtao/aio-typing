@@ -1,7 +1,6 @@
-// typingGame.js
+// managementGame.js
 'use strict';
 {
-    const targetWords = ["red", "pink", "blue", "yellow", "green"];
     const translate  = document.querySelector("#translate");
     const targetElem  = document.querySelector("#target");
     const result = document.querySelector("#result");
@@ -62,7 +61,7 @@
         return audioPanel;
     }
     // setWord：次の単語をセットする
-    async function setWord(targetElem, audioPanel) {
+    function setWord(targetElem, audioPanel) {
         console.dir("start setWord");
         console.dir(typeof(sectionContents.ctx));
         // word = words[Math.floor(Math.random() * words.length)];
@@ -105,6 +104,7 @@
         }, 500);
         result.textContent = "";
         isPlaying = true;
+        translate.classList.remove("hidden");
         startTime = Date.now();
     }
     document.addEventListener('click', () => {
@@ -140,6 +140,7 @@
                 const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
                 result.textContent = `Finished! ${elapsedTime} seconds!`;
                 isPlaying = false;
+                translate.classList.add("hidden");
             } else {
                 setWord(targetElem);
             }
