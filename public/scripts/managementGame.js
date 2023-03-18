@@ -4,13 +4,14 @@
     const translate  = document.querySelector("#translate");
     const targetElem  = document.querySelector("#target");
     const result = document.querySelector("#result");
-    const audioPanel = document.querySelector("#audio-panel");
+    let audioPanel;
     let sectionContents = [];
     let contents_index = [];
     let word;
     let wordUpper;
     let wordLower;
     let loc = 0; // target location
+    let content_index;
     //
     // setTargetWords : assetsから読み込んだオブジェクトをtargetWordsにセット
     async function setContents() {
@@ -18,56 +19,30 @@
         let allInOne = await resourceAllinOne.loadResource("assets-sample.json");
         console.log('at setContents ', allInOne);
         console.log(typeof(allInOne));
-        let ctx = [];
+        let contents = [];
         contents_index = [];
         let _index = 0;
         allInOne.forEach(item => {
             console.log(item);
-            ctx.push({
+            contents.push({
                 "index": item.index,
                 "word": item.englishText,
                 "translate": item.translation.slashed
             });
             contents_index.push(_index++);
         });
-        console.log(ctx);
+        console.log(contents);
         console.log(contents_index);
-        return {ctx};
-    }
-    // 音声ファイルパスのDOM追加：
-    async function appendAudioElements(ctx) {
-        console.dir("start appendAudioElements");
-        // audioPanel配下のDOM削除
-        let previousDoms = audioPanel.querySelectorAll("audio");
-        previousDoms.forEach((el) => (el.remove()));
-        //
-        await ctx.forEach(async (content)=>{
-            const _indexName = content.index;
-            const _audioName = `${_indexName.slice(1,_indexName.length - 1)}.mp3`;
-            const _audioPath = "assets/audioContents/" + _audioName;
-            const _fileExist = await resourceAllinOne.checkFileExist(_audioPath);
-            console.log("  result@appendAudioDOMs : " + _fileExist);
-            if (_fileExist) {
-                const _appendDom = document.createElement("audio");
-                const _dataKey  = document.createAttribute("data-Key");
-                _dataKey.value = _indexName;
-                _appendDom.id = _indexName;
-                _appendDom.src = _audioPath;
-                console.log(_appendDom);
-                await audioPanel.appendChild(_appendDom);
-            }
-        });
-        previousDoms = await audioPanel.querySelectorAll("audio");
-        return audioPanel;
+        return {contents};
     }
     // setWord：次の単語をセットする
-    function setWord(targetElem, audioPanel) {
+    function setWord(targetElem) {
         console.dir("start setWord");
-        console.dir(typeof(sectionContents.ctx));
+        console.dir(typeof(sectionContents.contents));
         // word = words[Math.floor(Math.random() * words.length)];
         let _index = contents_index.splice(Math.floor(Math.random() * contents_index.length), 1)[0];
         console.log(contents_index);
-        let _context = sectionContents.ctx.at(_index);
+        let _context = sectionContents.contents.at(_index);
         console.log(_context);
         translate.textContent = _context.translate;
         word = _context.word;
@@ -78,13 +53,8 @@
         loc = 0;
         //
         // start audio
-        playAudioFile(audioPanel, _context.index)
-    }
-    function playAudioFile(audioPanel, indexName) {
-        console.log(audioPanel)
-        // const audioPanelElem = document.getElementById(audioPanel.id);
-        const audioAction = document.getElementById(indexName);
-        audioAction.play();
+        audioControl.playAudioFile(audioPanel, _context.index);
+        return _context.index;
     }
     //
     // ゲーム開始：
@@ -96,11 +66,11 @@
         // words = targetWords.concat(); // 複製して初期化
         sectionContents = await setContents();
         // check AudioFiles and append audio DOMs
-        let _audioPanel = await appendAudioElements(sectionContents.ctx);
+        audioPanel = await audioControl.appendAudioElements(sectionContents.contents);
         //
         // audio要素の設置後にテキストを表示したいため、遅延実行：
         setTimeout(() => {
-            setWord(targetElem, _audioPanel);
+            content_index = setWord(targetElem);
         }, 500);
         result.textContent = "";
         isPlaying = true;
@@ -121,10 +91,15 @@
         }
     }
     document.addEventListener('keydown', e => {
-        // console.log(e.key);
+        console.log(e.key);
         if ( ! isPlaying ) { // ゲームの開始処理を追加
             if (e.key === "Enter")
                 startGame();
+            return;
+        }
+        if (e.key === " "){
+            console.log(`enter SPACE(${e.key})`);
+            audioControl.playAudioFile(audioPanel, content_index);
             return;
         }
         findTypingChar();
@@ -142,7 +117,7 @@
                 isPlaying = false;
                 translate.classList.add("hidden");
             } else {
-                setWord(targetElem);
+                content_index = setWord(targetElem);
             }
         }
     });
