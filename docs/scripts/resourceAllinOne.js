@@ -2,14 +2,23 @@
 const resourceAllinOne = (() => {
     'use strict';
     let loadedJSON;
-    const loadResource = async (file) => {
+    const loadResourceCategory = async (file) => {
         await fetch(file)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data);
+                // console.log(data);
+                loadedJSON = data
+            });
+        return loadedJSON.category;
+    }
+    const loadResourceContents = async (file) => {
+        await fetch(file)
+            .then((response) => response.json())
+            .then((data) => {
+                // console.log(data);
                 loadedJSON = data.contents.copyWithin();
-                console.log(loadedJSON);
-                console.log(typeof(loadedJSON));
+                // console.log(loadedJSON);
+                // console.log(typeof(loadedJSON));
             });
         return loadedJSON;
     }
@@ -27,5 +36,5 @@ const resourceAllinOne = (() => {
         console.log("  result : " + _existFilePath);
         return _existFilePath;
     }
-    return {loadResource, checkFileExist}
+    return {loadResourceCategory, loadResourceContents, checkFileExist}
 })();

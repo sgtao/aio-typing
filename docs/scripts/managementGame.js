@@ -3,6 +3,7 @@
 const managementGame = (() => {
     const instruction = document.querySelector("#instruction");
     const translate  = document.querySelector("#translate");
+    const categoryIndex  = document.querySelector("#category-index");
     const targetElem  = document.querySelector("#target");
     const audioPanel = document.querySelector("#audio-panel");
     const result = document.querySelector("#result");
@@ -15,15 +16,17 @@ const managementGame = (() => {
     let current_index;
     //
     // setTargetWords : assetsから読み込んだオブジェクトをtargetWordsにセット
-    async function setContents() {
+    async function setContents(file) {
         console.dir("start setContents");
-        let allInOne = await resourceAllinOne.loadResource("assets-sample.json");
-        console.log('at setContents ', allInOne);
-        console.log(typeof(allInOne));
+        const allInOneCategory = await resourceAllinOne.loadResourceCategory(file);
+        const allInOneContents = await resourceAllinOne.loadResourceContents(file);
+        console.log('at setContents ', allInOneContents);
+        console.log(allInOneContents);
+        categoryIndex.querySelector(".category").textContent = allInOneCategory;
         let contents = [];
         contents_index = [];
         let _index = 0;
-        allInOne.forEach(item => {
+        allInOneContents.forEach(item => {
             console.log(item);
             contents.push({
                 "index": item.index,
@@ -54,6 +57,7 @@ const managementGame = (() => {
         console.log(contents_index);
         let _context = sectionContents.contents.at(_index);
         console.log(_context);
+        categoryIndex.querySelector(".index").textContent = _context.index;
         translate.textContent = _context.translate;
         word = _context.word;
         wordUpper = word.toUpperCase();
@@ -74,6 +78,7 @@ const managementGame = (() => {
     function gotoMenu() {
         isPlaying = false;
         instruction.textContent = "Click/Enter to Start!";
+        categoryIndex.classList.add("hidden");
         translate.classList.add("hidden");
         targetElem.classList.add("hidden");
         audioPanel.classList.add("hidden");
@@ -82,7 +87,7 @@ const managementGame = (() => {
     async function startGame() {
         //
         // words = targetWords.concat(); // 複製して初期化
-        sectionContents = await setContents();
+        sectionContents = await setContents("assets-sample.json");
         // check AudioFiles and append audio DOMs
         await audioControl.appendAudioElements(sectionContents.contents);
         //
@@ -93,6 +98,7 @@ const managementGame = (() => {
         result.textContent = "";
         isPlaying = true;
         instruction.textContent = "Space=音声再生／Enter=次の文へ／Esc.=メニューへ戻る";
+        categoryIndex.classList.remove("hidden");
         translate.classList.remove("hidden");
         targetElem.classList.remove("hidden");
         audioPanel.classList.remove("hidden");
