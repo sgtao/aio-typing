@@ -89,7 +89,7 @@ const managementGame = (() => {
         // audio要素の設置後にテキストを表示したいため、遅延実行：
         setTimeout(() => {
             current_index = nextContent(targetElem);
-        }, 500);
+        }, 50);
         result.textContent = "";
         isPlaying = true;
         instruction.textContent = "Space=音声再生／Enter=次の文へ／Esc.=メニューへ戻る";
