@@ -72,8 +72,7 @@ const managementGame = (() => {
         audioControl.playAudioFile(audioPanel, _context.index);
         return _context.index;
     }
-    //
-    // ゲーム開始：
+    // メニュー画面：
     let isPlaying = false;
     function gotoMenu() {
         isPlaying = false;
@@ -84,6 +83,7 @@ const managementGame = (() => {
         audioPanel.classList.add("hidden");
         result.classList.add("hidden");
     }
+    // ゲーム開始：
     async function startGame() {
         //
         // words = targetWords.concat(); // 複製して初期化

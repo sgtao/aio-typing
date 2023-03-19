@@ -12,7 +12,7 @@ const audioControl = (() => {
         await contents.forEach(async (content)=>{
             const _indexName = content.index;
             const _audioName = `${_indexName.replace("idx","")}.mp3`;
-            const _audioPath = "assets/audioContents/" + _audioName;
+            const _audioPath = "audio/" + _audioName;
             const _fileExist = await resourceAllinOne.checkFileExist(_audioPath);
             console.log("  result@appendAudioDOMs : " + _fileExist);
             if (_fileExist) {

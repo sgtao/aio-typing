@@ -18,6 +18,16 @@ body {
     flex-direction: row;
     justify-content: space-between;
 }
+#category-index > div > .category,.index {
+    border-radius: .5em;
+    padding: .5em;
+}
+#category-index > div > .category {
+    background-color: #faf6c2;
+}
+#category-index > div > .index {
+    background-color: #c2fad7;
+}
 #instruction {
     font-size: 16px;
     font-weight: bold;
