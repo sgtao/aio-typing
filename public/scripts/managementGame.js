@@ -4,15 +4,15 @@ const managementGame = (() => {
     const instruction = document.querySelector("#instruction");
     const translate  = document.querySelector("#translate");
     const targetElem  = document.querySelector("#target");
+    const audioPanel = document.querySelector("#audio-panel");
     const result = document.querySelector("#result");
-    let audioPanel;
     let sectionContents = [];
     let contents_index = [];
     let word;
     let wordUpper;
     let wordLower;
     let loc = 0; // target location
-    let content_index;
+    let current_index;
     //
     // setTargetWords : assetsから読み込んだオブジェクトをtargetWordsにセット
     async function setContents() {
@@ -37,10 +37,18 @@ const managementGame = (() => {
         return {contents};
     }
     // setWord：次の単語をセットする
-    function setWord(targetElem) {
+    function nextContent(targetElem, current_index="idxNNN") {
         console.dir("start setWord");
         console.dir(typeof(sectionContents.contents));
-        // word = words[Math.floor(Math.random() * words.length)];
+        // 再生中音声終了
+        if (current_index !== "idxNNN")
+            audioControl.stopAudioFile(audioPanel, current_index);
+        // 終了チェック
+        if (contents_index.length === 0) {
+            gotoMenu();
+            return;
+        }
+        // 次コンテンツ
         let _index = contents_index.splice(Math.floor(Math.random() * contents_index.length), 1)[0];
         console.log(contents_index);
         let _context = sectionContents.contents.at(_index);
@@ -66,6 +74,7 @@ const managementGame = (() => {
         instruction.classList.add("hidden");
         translate.classList.add("hidden");
         targetElem.textContent = "Click/Enter to Start!";
+        audioPanel.classList.add("hidden");
         result.classList.add("hidden");
     }
     async function startGame() {
@@ -73,17 +82,18 @@ const managementGame = (() => {
         // words = targetWords.concat(); // 複製して初期化
         sectionContents = await setContents();
         // check AudioFiles and append audio DOMs
-        audioPanel = await audioControl.appendAudioElements(sectionContents.contents);
+        await audioControl.appendAudioElements(sectionContents.contents);
         //
         // audio要素の設置後にテキストを表示したいため、遅延実行：
         setTimeout(() => {
-            content_index = setWord(targetElem);
+            current_index = nextContent(targetElem);
         }, 500);
         result.textContent = "";
         isPlaying = true;
         instruction.classList.remove("hidden");
-        instruction.textContent = "Space=音声再生／Esc.=メニューへ戻る";
+        instruction.textContent = "Space=音声再生／Enter=次の文へ／Esc.=メニューへ戻る";
         translate.classList.remove("hidden");
+        audioPanel.classList.remove("hidden");
         result.classList.remove("hidden");
         startTime = Date.now();
     }
@@ -112,9 +122,13 @@ const managementGame = (() => {
             gotoMenu();
             return;
         }
+        if (e.key === "Enter"){
+            current_index = nextContent(targetElem, current_index);
+            return;
+        }
         if (e.key === " "){
             console.log(`enter SPACE(${e.key})`);
-            audioControl.playAudioFile(audioPanel, content_index);
+            audioControl.playAudioFile(audioPanel, current_index);
             return;
         }
         findTypingChar();
@@ -126,14 +140,14 @@ const managementGame = (() => {
             targetElem.textContent = "_".repeat(loc) + word.substring(loc);
         }
         if (loc >=  word.length || (loc == word.length - 1 && word[loc] === "”")) {
-            audioControl.stopAudioFile(audioPanel, content_index);
+            audioControl.stopAudioFile(audioPanel, current_index);
             if (contents_index.length === 0) { // 終了条件
                 const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
                 result.textContent = `Finished! ${elapsedTime} seconds!`;
                 isPlaying = false;
                 translate.classList.add("hidden");
             } else {
-                content_index = setWord(targetElem);
+                current_index = nextContent(targetElem, current_index);
             }
         }
     });
