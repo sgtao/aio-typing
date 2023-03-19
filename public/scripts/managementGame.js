@@ -1,6 +1,7 @@
 // managementGame.js
 'use strict';
-{
+const managementGame = (() => {
+    const instruction = document.querySelector("#instruction");
     const translate  = document.querySelector("#translate");
     const targetElem  = document.querySelector("#target");
     const result = document.querySelector("#result");
@@ -60,7 +61,13 @@
     // ゲーム開始：
     let isPlaying = false;
     let startTime;
-    targetElem.textContent = "Click/Enter to Start!";
+    function gotoMenu() {
+        isPlaying = false;
+        instruction.classList.add("hidden");
+        translate.classList.add("hidden");
+        targetElem.textContent = "Click/Enter to Start!";
+        result.classList.add("hidden");
+    }
     async function startGame() {
         //
         // words = targetWords.concat(); // 複製して初期化
@@ -74,7 +81,10 @@
         }, 500);
         result.textContent = "";
         isPlaying = true;
+        instruction.classList.remove("hidden");
+        instruction.textContent = "Space=音声再生／Esc.=メニューへ戻る";
         translate.classList.remove("hidden");
+        result.classList.remove("hidden");
         startTime = Date.now();
     }
     document.addEventListener('click', () => {
@@ -90,11 +100,16 @@
             loc = (loc < word.length - 1) ? loc + 1 : loc;
         }
     }
-    document.addEventListener('keydown', e => {
+    document.addEventListener('keydown', (e) => {
         console.log(e.key);
         if ( ! isPlaying ) { // ゲームの開始処理を追加
             if (e.key === "Enter")
                 startGame();
+            return;
+        }
+        if (e.key === "Escape"){
+            audioControl.stopAllAudioFiles(audioPanel);
+            gotoMenu();
             return;
         }
         if (e.key === " "){
@@ -111,6 +126,7 @@
             targetElem.textContent = "_".repeat(loc) + word.substring(loc);
         }
         if (loc >=  word.length || (loc == word.length - 1 && word[loc] === "”")) {
+            audioControl.stopAudioFile(audioPanel, content_index);
             if (contents_index.length === 0) { // 終了条件
                 const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
                 result.textContent = `Finished! ${elapsedTime} seconds!`;
@@ -121,4 +137,5 @@
             }
         }
     });
-}
+    return { gotoMenu, startGame }
+})();

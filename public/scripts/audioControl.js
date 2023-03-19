@@ -16,11 +16,12 @@ const audioControl = (() => {
             const _fileExist = await resourceAllinOne.checkFileExist(_audioPath);
             console.log("  result@appendAudioDOMs : " + _fileExist);
             if (_fileExist) {
-                const _appendDom = document.createElement("audio");
+                const _appendDom = new Audio(_audioPath);
                 const _dataKey  = document.createAttribute("data-Key");
                 _dataKey.value = _indexName;
                 _appendDom.id = _indexName;
-                _appendDom.src = _audioPath;
+                _appendDom.classList.add("hidden");
+                _appendDom.controls = true;
                 console.log(_appendDom);
                 await audioPanel.appendChild(_appendDom);
             }
@@ -29,19 +30,48 @@ const audioControl = (() => {
         return audioPanel;
     }
     // 音声ファイル再生・停止：
-    let audioState = "stop";
+    let audioAction = "<audio></audio>";
+    const audioState = { state : "stop"};
     function playAudioFile(audioPanelElm, indexName) {
-        if (audioState === "play") return;
+        if (audioState.state === "play") return;
         console.log(audioPanelElm)
         console.log(indexName)
-        // const audioPanelElem = document.getElementById(audioPanel.id);
         const audioPanelId = audioPanelElm.getAttribute("id");
         console.log(audioPanelId);
-        const audioAction = document.getElementById(audioPanelId).querySelector(`#${indexName}`);
+        const audioElems = document.getElementById(audioPanelId).querySelectorAll("audio");
+        audioElems.forEach((audioElem) => {
+            audioElem.classList.add("hidden");
+        });
+        audioAction = document.getElementById(audioPanelId).querySelector(`#${indexName}`);
         console.log(audioAction);
-        audioState = "play";
+        audioAction.classList.remove("hidden");
+        console.log(audioAction);
+        audioState.state = "play";
         audioAction.play();
-        audioState = "stop";
+        audioState.state = "stop";
     }
-    return { appendAudioElements, playAudioFile }
+    function stopAudioFile(audioPanelElm, indexName) {
+        console.log("stopAudioFile");
+        console.log(audioPanelElm)
+        console.log(indexName)
+        const audioPanelId = audioPanelElm.getAttribute("id");
+        console.log(audioPanelId);
+        audioAction = document.getElementById(audioPanelId).querySelector(`#${indexName}`);
+        console.log(audioAction);
+        audioAction.pause();
+        audioState.state = "stop";
+    }
+    function stopAllAudioFiles(audioPanelElm) {
+        console.log(audioState);
+        audioAction.pause();
+        audioState.state = "stop";
+        const audioPanelId = audioPanelElm.getAttribute("id");
+        console.log(audioPanelId);
+        const audioElems = document.getElementById(audioPanelId).querySelectorAll("audio");
+        audioElems.forEach(async (audioElem) => {
+            audioElem.pause();
+            audioElem.classList.add("hidden");
+        });
+    }
+    return { appendAudioElements, playAudioFile, stopAudioFile, stopAllAudioFiles, audioState }
 })();

@@ -14,12 +14,14 @@
             書籍『<a href="https://linkage-club.net/books#all" target="_blank" rel="noopener noreferrer">ALL IN ONE</a>』のタイピングソフトもっと簡単にしてみる。
             （本格版は<a href="https://www.amazon.co.jp/gp/product/4947747161/ref=as_li_tl?ie=UTF8&tag=linkageclub-22&camp=247&creative=1211&linkCode=as2&creativeASIN=4947747161&linkId=ca9401a08b1a266dc6b0271a82a370ee" target="_blank" rel="noopener noreferrer">書籍</a>で）
         </p>
+        <p id="instruction">
+        </p>
         <p id="translate" class="hidden">日本語訳</p>
         <p id="target">word</p>
-        <p id="result"></p>
-        <div id="audio-panel" class="hidden">
-            <audio id="[001]" src="assets/audioContents/001.mp3"></audio>
+        <div id="audio-panel">
+            <audio id="idxNNN" src="assets/audioContents/NNN.mp3" class="hidden" controls></audio>
         </div>
+        <p id="result" class="hidden"></p>
     </div>
     <script src="scripts/resourceAllinOne.js" defer></script>
     <script src="scripts/audioControl.js" defer></script>
@@ -27,6 +29,7 @@
     <script>
         window.addEventListener('load', (event) => {
             console.log('ページが完全に読み込まれました');
+            managementGame.gotoMenu();
         });
     </script>
 </body>
