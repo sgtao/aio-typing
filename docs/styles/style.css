@@ -3,10 +3,14 @@ body {
     padding-top:40px;
     font-family: 'Courier New', monospace;
     text-align: center;
+    background-color: #c2e8fa;
 }
 .container {
     width: 80%;
     margin: 0 auto;
+    background-color: white;
+    padding: 1em;
+    border-radius: .5em;
 }
 #category-index > div {
     display: flex;
