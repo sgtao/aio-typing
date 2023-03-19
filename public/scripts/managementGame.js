@@ -37,6 +37,7 @@ const managementGame = (() => {
         return {contents};
     }
     // setWord：次の単語をセットする
+    let startTime;
     function nextContent(targetElem, current_index="idxNNN") {
         console.dir("start setWord");
         console.dir(typeof(sectionContents.contents));
@@ -61,6 +62,8 @@ const managementGame = (() => {
         targetElem.textContent = word;
         loc = 0;
         //
+        startTime = Date.now();
+        result.textContent = "";
         // start audio
         audioControl.playAudioFile(audioPanel, _context.index);
         return _context.index;
@@ -68,12 +71,11 @@ const managementGame = (() => {
     //
     // ゲーム開始：
     let isPlaying = false;
-    let startTime;
     function gotoMenu() {
         isPlaying = false;
-        instruction.classList.add("hidden");
+        instruction.textContent = "Click/Enter to Start!";
         translate.classList.add("hidden");
-        targetElem.textContent = "Click/Enter to Start!";
+        targetElem.classList.add("hidden");
         audioPanel.classList.add("hidden");
         result.classList.add("hidden");
     }
@@ -90,12 +92,11 @@ const managementGame = (() => {
         }, 500);
         result.textContent = "";
         isPlaying = true;
-        instruction.classList.remove("hidden");
         instruction.textContent = "Space=音声再生／Enter=次の文へ／Esc.=メニューへ戻る";
         translate.classList.remove("hidden");
+        targetElem.classList.remove("hidden");
         audioPanel.classList.remove("hidden");
         result.classList.remove("hidden");
-        startTime = Date.now();
     }
     document.addEventListener('click', () => {
         if (isPlaying) return; // ゲーム中はクリックを無視する
@@ -123,7 +124,12 @@ const managementGame = (() => {
             return;
         }
         if (e.key === "Enter"){
-            current_index = nextContent(targetElem, current_index);
+            audioControl.stopAllAudioFiles(audioPanel);
+            if (contents_index.length === 0) { // 終了条件
+                gotoMenu();
+            } else {
+                current_index = nextContent(targetElem, current_index);
+            }
             return;
         }
         if (e.key === " "){
@@ -141,14 +147,8 @@ const managementGame = (() => {
         }
         if (loc >=  word.length || (loc == word.length - 1 && word[loc] === "”")) {
             audioControl.stopAudioFile(audioPanel, current_index);
-            if (contents_index.length === 0) { // 終了条件
-                const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
-                result.textContent = `Finished! ${elapsedTime} seconds!`;
-                isPlaying = false;
-                translate.classList.add("hidden");
-            } else {
-                current_index = nextContent(targetElem, current_index);
-            }
+            const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
+            result.textContent = `Finished! ${elapsedTime} seconds!`;
         }
     });
     return { gotoMenu, startGame }

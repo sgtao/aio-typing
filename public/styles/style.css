@@ -8,6 +8,11 @@ body {
     width: 80%;
     margin: 0 auto;
 }
+#instruction {
+    font-size: 16px;
+    font-weight: bold;
+    color: red;
+}
 #target {
     font-size: 24px;
     letter-spacing: .1em;
