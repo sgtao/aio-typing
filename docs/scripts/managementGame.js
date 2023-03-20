@@ -3,6 +3,7 @@
 const managementGame = (() => {
     const instruction = document.querySelector("#instruction");
     const translate  = document.querySelector("#translate");
+    const categoryIndex  = document.querySelector("#category-index");
     const targetElem  = document.querySelector("#target");
     const audioPanel = document.querySelector("#audio-panel");
     const result = document.querySelector("#result");
@@ -15,15 +16,17 @@ const managementGame = (() => {
     let current_index;
     //
     // setTargetWords : assetsから読み込んだオブジェクトをtargetWordsにセット
-    async function setContents() {
+    async function setContents(file) {
         console.dir("start setContents");
-        let allInOne = await resourceAllinOne.loadResource("assets-sample.json");
-        console.log('at setContents ', allInOne);
-        console.log(typeof(allInOne));
+        const allInOneCategory = await resourceAllinOne.loadResourceCategory(file);
+        const allInOneContents = await resourceAllinOne.loadResourceContents(file);
+        console.log('at setContents ', allInOneContents);
+        console.log(allInOneContents);
+        categoryIndex.querySelector(".category").textContent = allInOneCategory;
         let contents = [];
         contents_index = [];
         let _index = 0;
-        allInOne.forEach(item => {
+        allInOneContents.forEach(item => {
             console.log(item);
             contents.push({
                 "index": item.index,
@@ -54,6 +57,7 @@ const managementGame = (() => {
         console.log(contents_index);
         let _context = sectionContents.contents.at(_index);
         console.log(_context);
+        categoryIndex.querySelector(".index").textContent = _context.index;
         translate.textContent = _context.translate;
         word = _context.word;
         wordUpper = word.toUpperCase();
@@ -61,6 +65,7 @@ const managementGame = (() => {
         // console.log(words);
         targetElem.textContent = word;
         loc = 0;
+        findTypingChar();
         //
         startTime = Date.now();
         result.textContent = "";
@@ -68,21 +73,22 @@ const managementGame = (() => {
         audioControl.playAudioFile(audioPanel, _context.index);
         return _context.index;
     }
-    //
-    // ゲーム開始：
+    // メニュー画面：
     let isPlaying = false;
     function gotoMenu() {
         isPlaying = false;
         instruction.textContent = "Click/Enter to Start!";
+        categoryIndex.classList.add("hidden");
         translate.classList.add("hidden");
         targetElem.classList.add("hidden");
         audioPanel.classList.add("hidden");
         result.classList.add("hidden");
     }
+    // ゲーム開始：
     async function startGame() {
         //
         // words = targetWords.concat(); // 複製して初期化
-        sectionContents = await setContents();
+        sectionContents = await setContents("assets-sample.json");
         // check AudioFiles and append audio DOMs
         await audioControl.appendAudioElements(sectionContents.contents);
         //
@@ -93,6 +99,7 @@ const managementGame = (() => {
         result.textContent = "";
         isPlaying = true;
         instruction.textContent = "Space=音声再生／Enter=次の文へ／Esc.=メニューへ戻る";
+        categoryIndex.classList.remove("hidden");
         translate.classList.remove("hidden");
         targetElem.classList.remove("hidden");
         audioPanel.classList.remove("hidden");
@@ -105,8 +112,8 @@ const managementGame = (() => {
     function findTypingChar() {
         if (loc >=  word.length - 1) return;
         const regex = /[0-9A-Za-z]/g;
-        console.log(loc, word[loc]);
-        console.log(word[loc].match(regex));
+        // console.log(loc, word[loc]);
+        // console.log(word[loc].match(regex));
         while(word[loc].match(regex) === null && loc < word.length - 1) {
             loc = (loc < word.length - 1) ? loc + 1 : loc;
         }
@@ -137,13 +144,16 @@ const managementGame = (() => {
             audioControl.playAudioFile(audioPanel, current_index);
             return;
         }
-        findTypingChar();
         if (e.key !== wordUpper[loc] && e.key !== wordLower[loc] && loc < word.length - 1) {
             return;
         } else {
+            let _beforeReplaced = (loc === 0) ? "" : word.substring(0, loc);
+            let _afterReplaced = (loc === (word.length - 1)) ? "" : word.substring(loc + 1, word.length);
+            let _showTargetText = _beforeReplaced + "_" + _afterReplaced;
+            word = _showTargetText;
+            targetElem.textContent = _showTargetText;
             loc = (loc <  word.length - 1) ? loc + 1 : loc;
             findTypingChar();
-            targetElem.textContent = "_".repeat(loc) + word.substring(loc);
         }
         if (loc >=  word.length || (loc == word.length - 1 && word[loc] === "”")) {
             audioControl.stopAudioFile(audioPanel, current_index);
