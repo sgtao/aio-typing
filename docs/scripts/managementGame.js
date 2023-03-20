@@ -65,6 +65,7 @@ const managementGame = (() => {
         // console.log(words);
         targetElem.textContent = word;
         loc = 0;
+        findTypingChar();
         //
         startTime = Date.now();
         result.textContent = "";
@@ -111,8 +112,8 @@ const managementGame = (() => {
     function findTypingChar() {
         if (loc >=  word.length - 1) return;
         const regex = /[0-9A-Za-z]/g;
-        console.log(loc, word[loc]);
-        console.log(word[loc].match(regex));
+        // console.log(loc, word[loc]);
+        // console.log(word[loc].match(regex));
         while(word[loc].match(regex) === null && loc < word.length - 1) {
             loc = (loc < word.length - 1) ? loc + 1 : loc;
         }
@@ -143,13 +144,16 @@ const managementGame = (() => {
             audioControl.playAudioFile(audioPanel, current_index);
             return;
         }
-        findTypingChar();
         if (e.key !== wordUpper[loc] && e.key !== wordLower[loc] && loc < word.length - 1) {
             return;
         } else {
+            let _beforeReplaced = (loc === 0) ? "" : word.substring(0, loc);
+            let _afterReplaced = (loc === (word.length - 1)) ? "" : word.substring(loc + 1, word.length);
+            let _showTargetText = _beforeReplaced + "_" + _afterReplaced;
+            word = _showTargetText;
+            targetElem.textContent = _showTargetText;
             loc = (loc <  word.length - 1) ? loc + 1 : loc;
             findTypingChar();
-            targetElem.textContent = "_".repeat(loc) + word.substring(loc);
         }
         if (loc >=  word.length || (loc == word.length - 1 && word[loc] === "”")) {
             audioControl.stopAudioFile(audioPanel, current_index);
