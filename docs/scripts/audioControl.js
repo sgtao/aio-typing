@@ -30,7 +30,6 @@ const audioControl = (() => {
         return audioPanel;
     }
     // 音声ファイル再生・停止：
-    let audioAction = "<audio></audio>";
     const audioState = { state : "stop"};
     function playAudioFile(audioPanelElm, indexName) {
         if (audioState.state === "play") return;
@@ -42,7 +41,7 @@ const audioControl = (() => {
         audioElems.forEach((audioElem) => {
             audioElem.classList.add("hidden");
         });
-        audioAction = document.getElementById(audioPanelId).querySelector(`#${indexName}`);
+        const audioAction = document.getElementById(audioPanelId).querySelector(`#${indexName}`);
         console.log(audioAction);
         audioAction.classList.remove("hidden");
         console.log(audioAction);
@@ -56,7 +55,7 @@ const audioControl = (() => {
         console.log(indexName)
         const audioPanelId = audioPanelElm.getAttribute("id");
         console.log(audioPanelId);
-        audioAction = document.getElementById(audioPanelId).querySelector(`#${indexName}`);
+        const audioAction = document.getElementById(audioPanelId).querySelector(`#${indexName}`);
         console.log(audioAction);
         audioAction.pause();
         audioState.state = "stop";
