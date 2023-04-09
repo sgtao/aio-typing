@@ -15,6 +15,19 @@ const managementGame = (() => {
     let loc = 0; // target location
     let current_index;
     //
+    // メニュー画面：
+    let isPlaying = false;
+    let isNextAvailable = false;
+    function gotoMenu() {
+        isPlaying = false;
+        isNextAvailable = false;
+        instruction.textContent = "Click/Enter to Start!";
+        categoryIndex.classList.add("hidden");
+        translate.classList.add("hidden");
+        targetElem.classList.add("hidden");
+        audioPanel.classList.add("hidden");
+        result.classList.add("hidden");
+    }
     // setTargetWords : assetsから読み込んだオブジェクトをtargetWordsにセット
     async function setContents(file) {
         console.dir("start setContents");
@@ -42,6 +55,7 @@ const managementGame = (() => {
     // setWord：次の単語をセットする
     let startTime;
     function nextContent(targetElem, current_index="idxNNN") {
+        isNextAvailable = false;
         console.dir("start setWord");
         console.dir(typeof(sectionContents.contents));
         // 再生中音声終了
@@ -72,17 +86,6 @@ const managementGame = (() => {
         // start audio
         audioControl.playAudioFile(audioPanel, _context.index);
         return _context.index;
-    }
-    // メニュー画面：
-    let isPlaying = false;
-    function gotoMenu() {
-        isPlaying = false;
-        instruction.textContent = "Click/Enter to Start!";
-        categoryIndex.classList.add("hidden");
-        translate.classList.add("hidden");
-        targetElem.classList.add("hidden");
-        audioPanel.classList.add("hidden");
-        result.classList.add("hidden");
     }
     // ゲーム開始：
     async function startGame() {
@@ -118,11 +121,27 @@ const managementGame = (() => {
             loc = (loc < word.length - 1) ? loc + 1 : loc;
         }
     }
+    function _showFinishContent() {
+        isNextAvailable = true;
+        audioControl.stopAudioFile(audioPanel, current_index);
+        const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
+        result.textContent = `Finished! ${elapsedTime} seconds!`;
+    }
     document.addEventListener('keydown', (e) => {
         console.log(e.key);
         if ( ! isPlaying ) { // ゲームの開始処理を追加
             if (e.key === "Enter")
                 startGame();
+            return;
+        }
+        if ( isNextAvailable ){
+            if (e.key === "Enter") {
+                if (contents_index.length === 0) { // 終了条件
+                    gotoMenu();
+                } else {
+                    current_index = nextContent(targetElem, current_index);
+                }
+            }
             return;
         }
         if (e.key === "Escape"){
@@ -131,12 +150,7 @@ const managementGame = (() => {
             return;
         }
         if (e.key === "Enter"){
-            audioControl.stopAllAudioFiles(audioPanel);
-            if (contents_index.length === 0) { // 終了条件
-                gotoMenu();
-            } else {
-                current_index = nextContent(targetElem, current_index);
-            }
+            _showFinishContent();
             return;
         }
         if (e.key === " "){
@@ -156,9 +170,7 @@ const managementGame = (() => {
             findTypingChar();
         }
         if (loc >=  word.length || (loc == word.length - 1 && word[loc] === "”")) {
-            audioControl.stopAudioFile(audioPanel, current_index);
-            const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(2);
-            result.textContent = `Finished! ${elapsedTime} seconds!`;
+            _showFinishContent();
         }
     });
     return { gotoMenu, startGame }
