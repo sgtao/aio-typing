@@ -7,11 +7,11 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
-### `npm start`
+### `pnpm start`
 
-### `npm test`
+### `pnpm test`
 
-### `npm run build`
+### `pnpm run build`
 
-### `npm run eject`
+### `pnpm run eject`
 
