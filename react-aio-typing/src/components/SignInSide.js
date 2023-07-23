@@ -1,9 +1,7 @@
 // SignInSide.js
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
 // import FormControlLabel from '@mui/material/FormControlLabel';
 // import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
@@ -13,11 +11,16 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { GoogleButton } from 'react-google-button';
+import {
+  signInWithPopup,
+} from 'firebase/auth';
+import { auth, provider } from '../firebase';
 
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright 息 '}
+      {'Copyright @ '}
       <Link color="inherit" href="https://sgtao.github.io/">
         sg.tao.so@gmail.com
       </Link>{' '}
@@ -27,18 +30,23 @@ function Copyright(props) {
   );
 }
 
+
 // TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+  // signIn with Google
+  // refer Firebase doc : https://firebase.google.com/docs/auth/web/google-signin?hl=ja
+  const signInGoogle = async () => {
+    await signInWithPopup(auth, provider)
+      .then( console.log('success signIn')) 
+      // .then((result) => {
+      //   console.dir(result);
+      //   // The signed-in user info.
+      //   // const user = result.user;
+      // })
+      .catch((err) => alert(err.message));
   };
 
   return (
@@ -75,51 +83,12 @@ export default function SignInSide() {
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-              {/* <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              /> */}
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Sign In
-              </Button>
-              <Grid container>
-                <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link href="#" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
-              </Grid>
+            <Box component="form" noValidate sx={{ mt: 1 }}>
+              <div>
+                <div className='max-w-[240px] m-auto py-4'>
+                  <GoogleButton onClick={signInGoogle} />
+                </div>
+              </div>
               <Copyright sx={{ mt: 5 }} />
             </Box>
           </Box>

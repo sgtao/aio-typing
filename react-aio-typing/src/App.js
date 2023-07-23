@@ -1,30 +1,41 @@
-import { useState } from "react";
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
+import { useEffect, useState } from "react";
 import Button from '@mui/material/Button';
+import { signOut } from "firebase/auth";
+
 import AppHeader from './components/AppHeader';
 import SignInSide from './components/SignInSide.js';
+import { auth } from "./firebase";
 
 function App() {
-  let [ signined, setSignined ] = useState(false);
+  const [userName, setUserName] = useState("");
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUserName(user.displayName);
+      } else setUserName("");
+    });
+  }, []);
+  const signOutGoogle = async () => {
+    signOut(auth).then(() => {
+      // Sign-out successful.
+      console.log('success signOut');
+      setUserName("");
+    }).catch((err) => alert(err.message));
+  }
 
   return (
     <div className="App">
       <AppHeader></AppHeader>
       <main>
-        {signined
+        {(userName === "")
           ? <div>
-              <Button onClick={() => setSignined(false)}  name="sign-out">
-                Sign Out
-              </Button>
+              <SignInSide></SignInSide>
             </div>
           : <div>
-              <Button onClick={() => setSignined(true)}  name="sign-in">
-                Sign in
+              <Button onClick={signOutGoogle} name="sign-out">
+                Sign Out
               </Button>
-              <SignInSide></SignInSide>
+              <h1>Welcome</h1>
             </div>
         }
       </main>
