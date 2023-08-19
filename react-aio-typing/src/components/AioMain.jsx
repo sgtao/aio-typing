@@ -31,10 +31,14 @@ const AioMain = () => {
             setSelectCategory(0);
         });
     }, [])
-    const handleClick = async (index) => {
-        console.log(index);
-        console.log();
-        await setSelectCategory(index);
+    const handleClick = async (category_id) => {
+        console.log(category_id);
+        await setSelectCategory(category_id);
+        if (category_id > 0) {
+            axios.get(`${baseURL}/category/item?id=${category_id}`).then((response) => {
+                console.log(response);
+            });
+        }
     };
 
     return (
