@@ -6,6 +6,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
 import axios from 'axios';
@@ -43,7 +44,7 @@ const AioMain = () => {
 
     return (
         <div>
-            <Button onClick={signOutGoogle} name="sign-out">
+            <Button size="small" variant="outlined" startIcon={<LogoutIcon />} onClick={signOutGoogle} name="sign-out">
                 Sign Out
             </Button>
             <Box sx={{ width: '90%', maxWidth: 640, marginX: 4, bgcolor: 'background.paper' }}>
