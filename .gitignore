@@ -11,9 +11,6 @@ lerna-debug.log*
 node_modules/
 jspm_packages/
 
-# authentication
-firebase.js
-
 ## local settings
 myscripts
 01_references
