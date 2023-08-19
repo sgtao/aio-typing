@@ -20,12 +20,8 @@ function App() {
       <AppHeader></AppHeader>
       <main>
         {(userName === "")
-          ? <div>
-              <SignInSide></SignInSide>
-            </div>
-          : <div>
-              <AioMain />
-            </div>
+          ? <SignInSide />
+          : <AioMain />
         }
       </main>
     </div>

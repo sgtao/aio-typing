@@ -21,37 +21,52 @@ const AioMain = () => {
     }
     const [categoryNum, setCategoryNum] = useState(0);
     const [categories, setCategories] = useState([]);
-
+    const [selectCategory, setSelectCategory] = useState(0)
     useEffect(() => {
         console.log('useEffect is called');
         axios.get(`${baseURL}/category/`).then((response) => {
             console.log(response);
             setCategoryNum(response.data.number);
             setCategories(response.data.categories);
+            setSelectCategory(0);
         });
     }, [])
+    const handleClick = async (index) => {
+        console.log(index);
+        console.log();
+        await setSelectCategory(index);
+    };
 
     return (
         <div>
             <Button onClick={signOutGoogle} name="sign-out">
                 Sign Out
             </Button>
-            <div>
-                <Box sx={{ width: '80%', maxWidth: 540, marginX: 2, bgcolor: 'background.paper' }}>
-                    <h4>Number of Categories: {categoryNum}</h4>
-                    <List>
-                        {categories.map((category, index) => {
-                            return (
-                                <ListItem key={index} disablePadding>
-                                    <ListItemButton>
-                                        <ListItemText primary={category} />
-                                    </ListItemButton>
-                                </ListItem>
-                            );
-                        })}
-                    </List>
-                </Box>
-            </div>
+            <Box sx={{ width: '90%', maxWidth: 640, marginX: 4, bgcolor: 'background.paper' }}>
+                {(selectCategory === 0) ?
+                    <>
+                        <h4>Number of Categories: {categoryNum}</h4>
+                        <List>
+                            {categories.map((category, index) => {
+                                return (
+                                    <ListItem key={index} disablePadding>
+                                        <ListItemButton onClick={() => handleClick(index+1)}>
+                                            <ListItemText primary={category} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                );
+                            })}
+                        </List>
+                    </>
+                :
+                    <>
+                        <ListItemButton onClick={() => handleClick(0)}>
+                            <ListItemText primary="to Category Menu" />
+                        </ListItemButton>
+                    </>
+                }
+            </Box>
+
         </div>
     );
 };
