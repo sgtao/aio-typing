@@ -7,9 +7,10 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
 import axios from 'axios';
+import { auth } from '../firebase';
+import AioTyping from './AioTyping';
 
 const baseURL = process.env.REACT_APP_BACKEND_URL;
 
@@ -23,6 +24,11 @@ const AioMain = () => {
     const [categoryNum, setCategoryNum] = useState(0);
     const [categories, setCategories] = useState([]);
     const [selectCategory, setSelectCategory] = useState(0)
+    const [contents, setContents] = useState({
+        category_name: 'none',
+        number_items: 0,
+        items: []
+    });
     useEffect(() => {
         console.log('useEffect is called');
         axios.get(`${baseURL}/category/`).then((response) => {
@@ -32,13 +38,43 @@ const AioMain = () => {
             setSelectCategory(0);
         });
     }, [])
+    const getContentsItems = async (startNo, endNo) => {
+        let items = [];
+        let itemNo = startNo;
+        while (itemNo <= endNo) {
+            await axios.get(`${baseURL}/contents/item?id=${itemNo}`).then((response) => {
+                // console.log(response);
+                items.push(response.data);
+            });
+            itemNo++;
+        }
+        console.log(items);
+        return items;
+    }
     const handleClick = async (category_id) => {
         console.log(category_id);
-        await setSelectCategory(category_id);
         if (category_id > 0) {
             axios.get(`${baseURL}/category/item?id=${category_id}`).then((response) => {
                 console.log(response);
+                contents.category_name = response.data.category;
+                contents.number_items = response.data.number;
+                setContents(contents);
+                const items = getContentsItems(
+                    response.data.startFrom, response.data.endTo);
+                return items;
+            }).then((items) => {
+                contents.items = items;
+                setContents(contents);
+                setSelectCategory(category_id);
             });
+        } else {
+            // clear contents list
+            setContents({
+                category_name: 'none',
+                number_items: 0,
+                item: []
+            });
+            setSelectCategory(category_id);
         }
     };
 
@@ -47,7 +83,15 @@ const AioMain = () => {
             <Button size="small" variant="outlined" startIcon={<LogoutIcon />} onClick={signOutGoogle} name="sign-out">
                 Sign Out
             </Button>
-            <Box sx={{ width: '90%', maxWidth: 640, marginX: 4, bgcolor: 'background.paper' }}>
+            <Box
+                sx={{
+                    width: '90%',
+                    maxWidth: 640,
+                    marginX: 4,
+                    bgcolor: 'background.paper',
+                    border: '1px dashed grey'
+                }}
+            >
                 {(selectCategory === 0) ?
                     <>
                         <h4>Number of Categories: {categoryNum}</h4>
@@ -68,10 +112,10 @@ const AioMain = () => {
                         <ListItemButton onClick={() => handleClick(0)}>
                             <ListItemText primary="to Category Menu" />
                         </ListItemButton>
+                        <AioTyping contents={contents}/>
                     </>
                 }
             </Box>
-
         </div>
     );
 };
