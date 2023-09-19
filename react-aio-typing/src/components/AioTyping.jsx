@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-const AioTyping = ({ contents = {} }) => {
+// eslint-disable-next-line react/prop-types
+const AioTyping = ({ contents = {}}) => {
     let [englishText, setEnglishText] = useState("");
     let [translationSlashed, setTranslationSlashed] = useState("");
     useEffect(() => {
@@ -45,5 +46,4 @@ const AioTyping = ({ contents = {} }) => {
         </Box>
     );
 }
-
 export default AioTyping;

@@ -1,19 +1,23 @@
-[to Top](../README.md)
-
 # react-aio-typing
-## Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## React + Vite
+
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
 ## Available Scripts
 
-### `pnpm start`
+### `npm run dev`
 
-### `pnpm test`
+### `npm run lint`
 
-### `pnpm run build`
+### `npm run build`
 
-### `pnpm run eject`
+### `npm run preview`
 
 ## Deploy to firebase Hosting
 - refer Firebase doc : https://firebase.google.com/docs/hosting?authuser=0&hl=ja#implementation_path
@@ -44,11 +48,10 @@ firebase deploy
 - refer MaterialUI site : https://mui.com/material-ui/getting-started/installation/
 ### setup
 ```sh
-pnpm install @mui/material @emotion/react @emotion/styled -D
-pnpm install @fontsource/roboto -D
-pnpm install @mui/icons-material -D
+npm install @mui/material @emotion/react @emotion/styled -D
+npm install @fontsource/roboto -D
+npm install @mui/icons-material -D
 ```
 
 ### Implement Login Screen
 - use template : https://github.com/mui/material-ui/blob/v5.14.0/docs/data/material/getting-started/templates/sign-in-side/SignInSide.js
-
